@@ -12,13 +12,10 @@ import { createTicket } from "@/services/ticketService";
 import { useToast } from "@/hooks/use-toast";
 
 const productCategories = [
-  "Electronics",
-  "Appliances", 
-  "Computers",
-  "Mobile Devices",
-  "Audio Equipment",
-  "Kitchen Appliances",
-  "HVAC Systems",
+  "Computer",
+  "Laptop", 
+  "Printer",
+  "UPS",
   "Other"
 ];
 
