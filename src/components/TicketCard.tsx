@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import { Ticket } from "@/types/ticket";
-import { Clock, User, Wrench, Phone } from "lucide-react";
+import { Clock, User, Wrench, Phone, Printer } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { printTicket } from "@/utils/printTicket";
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -47,9 +49,23 @@ export function TicketCard({ ticket, onClick }: TicketCardProps) {
             <Clock className="h-3 w-3" />
             <span>{formatDistanceToNow(new Date(ticket.createdAt), { addSuffix: true })}</span>
           </div>
-          <Badge variant="outline" className="text-xs">
-            SN: {ticket.serialNumber}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-xs">
+              SN: {ticket.serialNumber}
+            </Badge>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                printTicket(ticket);
+              }}
+              className="h-6 w-6 p-0"
+              title="Print ticket"
+            >
+              <Printer className="h-3 w-3" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
