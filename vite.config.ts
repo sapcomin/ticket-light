@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
@@ -25,8 +25,12 @@ export default defineConfig(({ mode }) => ({
         return false;
       },
     },
+    commonjsOptions: {
+      include: [/node_modules/],
+    },
   },
   optimizeDeps: {
     include: ['@rollup/rollup-linux-x64-gnu'],
+    exclude: ['@swc/core'],
   },
 }));
