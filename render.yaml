@@ -4,6 +4,7 @@ services:
     env: static
     buildCommand: npm ci --legacy-peer-deps && npm run build
     staticPublishPath: ./dist
+    nodeVersion: 18
     envVars:
       - key: VITE_SUPABASE_URL
         sync: false
