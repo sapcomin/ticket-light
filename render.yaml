@@ -2,7 +2,7 @@ services:
   - type: web
     name: ticket-light
     env: static
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci --legacy-peer-deps && npm run build
     staticPublishPath: ./dist
     envVars:
       - key: VITE_SUPABASE_URL

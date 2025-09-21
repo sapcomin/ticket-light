@@ -15,4 +15,18 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      external: (id) => {
+        // Handle Rollup native module issues
+        if (id.includes('@rollup/rollup-linux-x64-gnu')) {
+          return false;
+        }
+        return false;
+      },
+    },
+  },
+  optimizeDeps: {
+    include: ['@rollup/rollup-linux-x64-gnu'],
+  },
 }));
