@@ -12,6 +12,7 @@ import { getTicketById, updateTicket } from "@/services/ticketService";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { printTicket } from "@/utils/printTicket";
+import { printLabel } from "@/utils/printLabel";
 
 export default function TicketDetail() {
   const { ticketId } = useParams();
@@ -135,15 +136,26 @@ export default function TicketDetail() {
               Created {format(new Date(ticket.createdAt), "PPp")}
             </p>
           </div>
-          <Button 
-            onClick={() => printTicket(ticket)}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <Printer className="h-4 w-4" />
-            Print Ticket
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              onClick={() => printTicket(ticket)}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Printer className="h-4 w-4" />
+              Print Ticket
+            </Button>
+            <Button 
+              onClick={() => printLabel(ticket)}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Printer className="h-4 w-4" />
+              Print Label
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

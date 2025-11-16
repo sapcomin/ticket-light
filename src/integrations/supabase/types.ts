@@ -14,7 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ticket_history: {
+        Row: {
+          action: string
+          description: string
+          id: string
+          status: string
+          ticket_id: string
+          timestamp: string
+        }
+        Insert: {
+          action: string
+          description: string
+          id?: string
+          status: string
+          ticket_id: string
+          timestamp?: string
+        }
+        Update: {
+          action?: string
+          description?: string
+          id?: string
+          status?: string
+          ticket_id?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_history_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tickets: {
+        Row: {
+          contact_number: string
+          created_at: string
+          customer_name: string
+          id: string
+          problem: string
+          product_category: string
+          product_model: string
+          serial_number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          contact_number: string
+          created_at?: string
+          customer_name: string
+          id?: string
+          problem: string
+          product_category: string
+          product_model: string
+          serial_number: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          contact_number?: string
+          created_at?: string
+          customer_name?: string
+          id?: string
+          problem?: string
+          product_category?: string
+          product_model?: string
+          serial_number?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
