@@ -69,14 +69,14 @@ export const getAllTickets = async (): Promise<Ticket[]> => {
         timestamp: entry.timestamp,
         action: entry.action,
         description: entry.description,
-        status: entry.status || undefined
+        status: entry.status as TicketStatus || undefined
       });
       return acc;
     }, {} as Record<string, TicketHistoryEntry[]>);
 
     // Convert to application types
     return tickets.map(ticket => 
-      convertTicketRowToTicket(ticket, historyByTicket[ticket.id] || [])
+      convertTicketRowToTicket(ticket as TicketRow, historyByTicket[ticket.id] || [])
     );
   } catch (error) {
     console.error('Error fetching tickets:', error);
@@ -112,10 +112,10 @@ export const getTicketById = async (id: string): Promise<Ticket | null> => {
       timestamp: entry.timestamp,
       action: entry.action,
       description: entry.description,
-      status: entry.status || undefined
+      status: entry.status as TicketStatus || undefined
     }));
 
-    return convertTicketRowToTicket(ticket, historyEntries);
+    return convertTicketRowToTicket(ticket as TicketRow, historyEntries);
   } catch (error) {
     console.error('Error fetching ticket:', error);
     throw error;
@@ -149,7 +149,7 @@ export const createTicket = async (data: CreateTicketData): Promise<Ticket> => {
     if (historyError) throw historyError;
 
     // Return the created ticket with history
-    return convertTicketRowToTicket(ticket, [{
+    return convertTicketRowToTicket(ticket as TicketRow, [{
       id: `temp_${Date.now()}`,
       timestamp: ticket.created_at,
       action: 'Created',
@@ -186,7 +186,7 @@ export const updateTicket = async (
         .single();
 
       if (ticketError) throw ticketError;
-      updatedTicket = convertTicketRowToTicket(ticket, currentTicket.history);
+      updatedTicket = convertTicketRowToTicket(ticket as TicketRow, currentTicket.history);
     }
 
     // Add history entry if there's a note or status change
@@ -275,13 +275,13 @@ export const searchTickets = async (query: string): Promise<Ticket[]> => {
         timestamp: entry.timestamp,
         action: entry.action,
         description: entry.description,
-        status: entry.status || undefined
+        status: entry.status as TicketStatus || undefined
       });
       return acc;
     }, {} as Record<string, TicketHistoryEntry[]>);
 
     return tickets.map(ticket => 
-      convertTicketRowToTicket(ticket, historyByTicket[ticket.id] || [])
+      convertTicketRowToTicket(ticket as TicketRow, historyByTicket[ticket.id] || [])
     );
   } catch (error) {
     console.error('Error searching tickets:', error);
@@ -325,13 +325,13 @@ export const getTicketsByStatus = async (status: TicketStatus | 'all'): Promise<
         timestamp: entry.timestamp,
         action: entry.action,
         description: entry.description,
-        status: entry.status || undefined
+        status: entry.status as TicketStatus || undefined
       });
       return acc;
     }, {} as Record<string, TicketHistoryEntry[]>);
 
     return tickets.map(ticket => 
-      convertTicketRowToTicket(ticket, historyByTicket[ticket.id] || [])
+      convertTicketRowToTicket(ticket as TicketRow, historyByTicket[ticket.id] || [])
     );
   } catch (error) {
     console.error('Error fetching tickets by status:', error);
