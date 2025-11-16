@@ -14,70 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      tickets: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          customer_name: string
-          contact_number: string
-          product_category: string
-          product_model: string
-          serial_number: string
-          problem: string
-          status: 'open' | 'in-progress' | 'closed'
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          customer_name: string
-          contact_number: string
-          product_category: string
-          product_model: string
-          serial_number: string
-          problem: string
-          status?: 'open' | 'in-progress' | 'closed'
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          customer_name?: string
-          contact_number?: string
-          product_category?: string
-          product_model?: string
-          serial_number?: string
-          problem?: string
-          status?: 'open' | 'in-progress' | 'closed'
-        }
-      }
-      ticket_history: {
-        Row: {
-          id: string
-          ticket_id: string
-          timestamp: string
-          action: string
-          description: string
-          status: 'open' | 'in-progress' | 'closed' | null
-        }
-        Insert: {
-          id?: string
-          ticket_id: string
-          timestamp?: string
-          action: string
-          description: string
-          status?: 'open' | 'in-progress' | 'closed' | null
-        }
-        Update: {
-          id?: string
-          ticket_id?: string
-          timestamp?: string
-          action?: string
-          description?: string
-          status?: 'open' | 'in-progress' | 'closed' | null
-        }
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
@@ -86,7 +23,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      ticket_status: 'open' | 'in-progress' | 'closed'
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
