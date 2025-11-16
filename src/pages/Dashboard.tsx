@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TicketCard } from "@/components/TicketCard";
 import { Ticket, TicketStatus } from "@/types/ticket";
-import { getAllTickets, getTicketsByStatus, searchTickets } from "@/services/ticketService";
+import { getAllTickets, searchAndFilterTickets } from "@/services/ticketService";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [allTickets, setAllTickets] = useState<Ticket[]>([]); // For stats calculation
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TicketStatus | "all">("all");
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,8 @@ export default function Dashboard() {
     try {
       setLoading(true);
       const data = await getAllTickets();
-      setTickets(data);
+      setAllTickets(data); // Keep all tickets for stats
+      setTickets(data); // Initial display
     } catch (error) {
       console.error('Error loading tickets:', error);
       toast({
@@ -64,14 +66,8 @@ export default function Dashboard() {
     const filterTickets = async () => {
       try {
         setLoading(true);
-        let filteredData: Ticket[];
-        
-        if (searchQuery.trim()) {
-          filteredData = await searchTickets(searchQuery);
-        } else {
-          filteredData = await getTicketsByStatus(statusFilter);
-        }
-        
+        // Use combined search and filter function
+        const filteredData = await searchAndFilterTickets(searchQuery, statusFilter);
         setTickets(filteredData);
       } catch (error) {
         console.error('Error filtering tickets:', error);
@@ -90,16 +86,17 @@ export default function Dashboard() {
     }, 300); // Debounce search
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, statusFilter]);
+  }, [searchQuery, statusFilter, toast]);
 
   const filteredTickets = tickets;
 
   const getStatusCounts = () => {
+    // Use allTickets for stats, not filtered tickets
     return {
-      total: tickets.length,
-      open: tickets.filter(t => t.status === 'open').length,
-      inProgress: tickets.filter(t => t.status === 'in-progress').length,
-      closed: tickets.filter(t => t.status === 'closed').length,
+      total: allTickets.length,
+      open: allTickets.filter(t => t.status === 'open').length,
+      inProgress: allTickets.filter(t => t.status === 'in-progress').length,
+      closed: allTickets.filter(t => t.status === 'closed').length,
     };
   };
 
@@ -222,9 +219,9 @@ export default function Dashboard() {
           ) : (
             <div className="col-span-full text-center py-12">
               <div className="text-muted-foreground mb-4">
-                {tickets.length === 0 ? "No tickets created yet" : "No tickets match your filters"}
+                {allTickets.length === 0 ? "No tickets created yet" : "No tickets match your filters"}
               </div>
-              {tickets.length === 0 && (
+              {allTickets.length === 0 && (
                 <Button 
                   onClick={() => navigate('/create-ticket')}
                   variant="outline"

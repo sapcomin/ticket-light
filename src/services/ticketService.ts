@@ -307,6 +307,8 @@ export const getTicketsByStatus = async (status: TicketStatus | 'all'): Promise<
 
     // Get history for all tickets
     const ticketIds = tickets.map(t => t.id);
+    if (ticketIds.length === 0) return [];
+
     const { data: history, error: historyError } = await supabase
       .from('ticket_history')
       .select('*')
@@ -335,6 +337,72 @@ export const getTicketsByStatus = async (status: TicketStatus | 'all'): Promise<
     );
   } catch (error) {
     console.error('Error fetching tickets by status:', error);
+    throw error;
+  }
+};
+
+// Search and filter tickets combined
+export const searchAndFilterTickets = async (
+  searchQuery: string,
+  status: TicketStatus | 'all'
+): Promise<Ticket[]> => {
+  try {
+    let query = supabase
+      .from('tickets')
+      .select('*');
+
+    // Apply status filter first if not 'all'
+    if (status !== 'all') {
+      query = query.eq('status', status);
+    }
+
+    // Apply search filter if provided (this will AND with status filter)
+    if (searchQuery.trim()) {
+      const searchTerm = searchQuery.trim();
+      query = query.or(
+        `customer_name.ilike.%${searchTerm}%,product_model.ilike.%${searchTerm}%,serial_number.ilike.%${searchTerm}%,id.ilike.%${searchTerm}%`
+      );
+    }
+
+    // Apply ordering last
+    query = query.order('updated_at', { ascending: false });
+
+    const { data: tickets, error } = await query;
+
+    if (error) throw error;
+
+    // Get history for all tickets
+    const ticketIds = tickets.map(t => t.id);
+    if (ticketIds.length === 0) return [];
+
+    const { data: history, error: historyError } = await supabase
+      .from('ticket_history')
+      .select('*')
+      .in('ticket_id', ticketIds)
+      .order('timestamp', { ascending: false });
+
+    if (historyError) throw historyError;
+
+    // Group history by ticket_id
+    const historyByTicket = history.reduce((acc, entry) => {
+      if (!acc[entry.ticket_id]) {
+        acc[entry.ticket_id] = [];
+      }
+      acc[entry.ticket_id].push({
+        id: entry.id,
+        timestamp: entry.timestamp,
+        action: entry.action,
+        description: entry.description,
+        status: entry.status || undefined
+      });
+      return acc;
+    }, {} as Record<string, TicketHistoryEntry[]>);
+
+    return tickets.map(ticket => 
+      convertTicketRowToTicket(ticket, historyByTicket[ticket.id] || [])
+    );
+  } catch (error) {
+    console.error('Error searching and filtering tickets:', error);
     throw error;
   }
 };
